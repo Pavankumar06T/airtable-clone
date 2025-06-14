@@ -1,27 +1,40 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const dotenv = require('dotenv');
-const tableRoutes = require('./routes/tableroutes');
-const authRoutes = require('./routes/authroutes'); // ✅ Add this line
+require('dotenv').config();
 
-dotenv.config();
+const authRoutes = require('./routes/authroutes');
+const tableRoutes = require('./routes/tableroutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/tables', tableRoutes);
-app.use('/api/auth', authRoutes); // ✅ Add this line too
+// MongoDB connection
+mongoose
+  .connect(process.env.MONGO_URI, {
+    // These options are no longer needed for Mongoose 6+
+  })
+  .then(() => {
+    console.log('MongoDB connected');
+  })
+  .catch((err) => {
+    console.error('MongoDB connection error:', err);
+  });
 
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log('MongoDB connected');
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-})
-.catch((err) => console.error('DB Connection Error:', err));
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/tables', tableRoutes);
+
+// Root route (optional)
+app.get('/', (req, res) => {
+  res.send('Welcome to the Airtable Clone Backend API!');
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
