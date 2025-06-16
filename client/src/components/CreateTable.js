@@ -9,21 +9,28 @@ function CreateTable() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5001/api/tables', {
+      await axios.post('http://localhost:5001/api/tables', {
         name,
         description,
       });
-      setMessage('Table created successfully!');
+      setMessage('✅ Table created successfully!');
       setName('');
       setDescription('');
     } catch (err) {
       console.error(err);
-      setMessage('Error creating table.');
+      setMessage('❌ Error creating table.');
     }
   };
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{
+      height: '100vh',
+      backgroundColor: '#f5f5f5',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
       <h2>Create Table</h2>
       <form onSubmit={handleSubmit}>
         <input
@@ -38,7 +45,7 @@ function CreateTable() {
           placeholder="Description (optional)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-        ></textarea>
+        />
         <br />
         <button type="submit">Create Table</button>
       </form>

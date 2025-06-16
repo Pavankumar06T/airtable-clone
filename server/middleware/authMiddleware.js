@@ -1,3 +1,4 @@
+// server/middleware/authmiddleware.js
 const jwt = require('jsonwebtoken');
 
 const protect = (req, res, next) => {

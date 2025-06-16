@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Table = require('../models/Table');
 
-// Create a new table
 router.post('/', async (req, res) => {
   const { name, description } = req.body;
 
@@ -11,7 +10,7 @@ router.post('/', async (req, res) => {
     await newTable.save();
     res.status(201).json({ message: 'Table created successfully' });
   } catch (err) {
-    console.error(err);
+    console.error("❌ Table creation failed:", err.message);
     res.status(500).json({ error: 'Failed to create table' });
   }
 });
