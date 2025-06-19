@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../index.css';
+import '../index.css'; // Optional: for styling
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -16,11 +16,15 @@ function Login() {
         email,
         password,
       });
+
       localStorage.setItem('token', res.data.token);
-      navigate('/dashboard');
+      setMessage('✅ Login successful!');
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1000);
     } catch (err) {
-      console.error(err);
-      setMessage('Login failed');
+      console.error('Login Error:', err.response?.data || err.message);
+      setMessage('❌ Login failed. Please check your credentials.');
     }
   };
 
@@ -28,11 +32,23 @@ function Login() {
     <div className="centered-container">
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        /><br />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        /><br />
         <button type="submit">Login</button>
       </form>
-      <p>{message}</p>
+      {message && <p>{message}</p>}
     </div>
   );
 }
