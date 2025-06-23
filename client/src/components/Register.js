@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../index.css'; // Optional: for styling
@@ -8,10 +8,21 @@ function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setMessage('');
+    setError('');
+
     try {
       await axios.post('http://localhost:5001/api/auth/register', {
         name,
@@ -24,8 +35,8 @@ function Register() {
         navigate('/login');
       }, 1000);
     } catch (err) {
-      console.error('Register Error:', err.response?.data || err.message);
-      setMessage('❌ Registration failed. Try again.');
+      const errorMsg = err.response?.data?.message || '❌ Registration failed. Try again.';
+      setError(errorMsg);
     }
   };
 
@@ -56,7 +67,29 @@ function Register() {
         /><br />
         <button type="submit">Register</button>
       </form>
-      {message && <p>{message}</p>}
+
+      {message && <p style={{ color: 'green' }}>{message}</p>}
+
+      {error && (
+        <div style={{ marginTop: '10px' }}>
+          <p style={{ color: 'red' }}>{error}</p>
+          {error.toLowerCase().includes('user already exists') && (
+            <button
+              onClick={() => navigate('/login')}
+              style={{
+                marginTop: '5px',
+                padding: '8px 15px',
+                backgroundColor: '#2196F3',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+              }}
+            >
+              Go to Login Page
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
